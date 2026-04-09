@@ -1,14 +1,40 @@
+# FOR BI-LEVEL CONFUSION MATRIX
 import numpy as np
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
 import matplotlib.pyplot as plt
-actual    = np.array(
-  ['Dog','Dog','Dog','Not Dog','Dog','Not Dog','Dog','Dog','Not Dog','Not Dog'])
-predicted = np.array(
-  ['Dog','Not Dog','Dog','Not Dog','Dog','Dog','Dog','Dog','Not Dog','Not Dog'])
-conf_matrix=confusion_matrix(actual,predicted)
-sns.heatmap(conf_matrix,annot=True,fmt='g',xticklabels=['Dog','Not Dog'],yticklabels=['Dog','Not Dog'],cmap='RdPu')
-plt.ylabel("prediction")
-plt.xlabel("actual")
-plt.title("confusion matrix")
+from sklearn.metrics import confusion_matrix, accuracy_score
+
+y_true_bin = np.array([1,0,1,1,0,1,0,0,1,0])
+y_pred_bin = np.array([1,0,1,0,0,1,1,0,1,0])
+
+cm_bin = confusion_matrix(y_true_bin, y_pred_bin)
+
+plt.figure()
+plt.imshow(cm_bin)
+plt.title("Bi-level Confusion Matrix")
+plt.colorbar()
+for i in range(cm_bin.shape[0]):
+    for j in range(cm_bin.shape[1]):
+        plt.text(j, i, cm_bin[i, j], ha='center')
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
 plt.show()
+# FOR MULTI-LEVEL CONFUSION MATRIX
+y_true_multi = np.array([0,1,2,1,0,2,1,0,2,1])
+y_pred_multi = np.array([0,2,2,1,0,1,1,0,2,0])
+
+cm_multi = confusion_matrix(y_true_multi, y_pred_multi)
+
+plt.figure()
+plt.imshow(cm_multi)
+plt.title("Multi-class Confusion Matrix")
+plt.colorbar()
+
+for i in range(cm_multi.shape[0]):
+    for j in range(cm_multi.shape[1]):
+        plt.text(j, i, cm_multi[i, j], ha='center')
+
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+print("Multi-Level Accuracy:", accuracy_score(y_true_multi, y_pred_multi))
