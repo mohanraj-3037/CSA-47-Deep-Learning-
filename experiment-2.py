@@ -1,24 +1,29 @@
-import pandas as pd, matplotlib.pyplot as plt, seaborn as sns
-from sklearn.datasets import load_wine
+#OVERFITTING ANALYSIS
+import numpy as np
+from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import *
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 
-w = load_wine()
-d = pd.DataFrame(w.data, columns=w.feature_names)
-d['t'] = w.target
-d = d[d['t'] != 2]
+data = load_iris()
+X = data.data
+y = data.target
 
-X, y = d.drop('t', axis=1), d['t']
-Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-m = DecisionTreeClassifier(random_state=1).fit(Xtr, ytr)
-yp = m.predict(Xte)
+poly = PolynomialFeatures(degree=5)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
 
-print(accuracy_score(yte, yp))
-print(classification_report(yte, yp, target_names=w.target_names[:2]))
-print(precision_score(yte, yp), recall_score(yte, yp), f1_score(yte, yp))
+model = LogisticRegression(max_iter=5000)
+model.fit(X_train_poly, y_train)
 
-sns.heatmap(confusion_matrix(yte, yp), annot=True, fmt='d', cmap='PuBuGn',
-            xticklabels=w.target_names[:2], yticklabels=w.target_names[:2])
-plt.show()
+train_pred = model.predict(X_train_poly)
+test_pred = model.predict(X_test_poly)
+
+train_acc = accuracy_score(y_train, train_pred)
+test_acc = accuracy_score(y_test, test_pred)
+
+print("Training Accuracy:", train_acc)
+print("Testing Accuracy:", test_acc)
